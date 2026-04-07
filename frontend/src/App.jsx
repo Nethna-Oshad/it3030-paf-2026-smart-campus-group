@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-ro
 import { AuthContext } from './context/AuthContext';
 
 // Import our page components
-import FacilitiesCatalogue from './pages/facilities/FacilitiesCatalogue';
-import FacilityDetails from './pages/facilities/FacilityDetails';
+//import FacilitiesCatalogue from './pages/facilities/FacilitiesCatalogue';
+//import FacilityDetails from './pages/facilities/FacilityDetails';
 import BookingDashboard from './pages/bookings/BookingDashboard'; // ALUTH PAGE EKA
 
 function App() {
