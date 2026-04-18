@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { useLocation } from 'react-router-dom'; // <-- IMPORT THIS
+import { useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import bookingService from '../../services/bookingService';
 import { QRCodeSVG } from 'qrcode.react';
 
 const StudentBookings = () => {
     const { user } = useContext(AuthContext);
-    const location = useLocation(); // <-- CATCH THE STATE FROM NAVBAR
+    const location = useLocation(); 
+    const navigate = useNavigate();
     
     const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -14,9 +15,8 @@ const StudentBookings = () => {
     const [selectedQrBooking, setSelectedQrBooking] = useState(null);
     const [checkInLoading, setCheckInLoading] = useState(false);
     
-    // --- NEW: State to track which card to highlight ---
     const [highlightedBookingId, setHighlightedBookingId] = useState(null);
-    const bookingRefs = useRef({}); // To hold references to each card for scrolling
+    const bookingRefs = useRef({}); 
 
     useEffect(() => {
         if (user && user.id) {
@@ -24,16 +24,13 @@ const StudentBookings = () => {
         }
     }, [user]);
 
-    // Check for highlight ID whenever bookings load or location changes
     useEffect(() => {
         if (!loading && location.state?.highlightId && bookingRefs.current[location.state.highlightId]) {
             const id = location.state.highlightId;
             setHighlightedBookingId(id);
             
-            // Scroll to the specific card smoothly
             bookingRefs.current[id].scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-            // Remove the highlight after 3 seconds
             setTimeout(() => {
                 setHighlightedBookingId(null);
             }, 3000);
@@ -96,7 +93,6 @@ const StudentBookings = () => {
                         return (
                             <div 
                                 key={booking.id} 
-                                // Assign the reference to this specific div
                                 ref={(el) => (bookingRefs.current[booking.id] = el)}
                                 style={{ 
                                     backgroundColor: 'white', 
@@ -107,7 +103,7 @@ const StudentBookings = () => {
                                     display: 'flex', 
                                     justifyContent: 'space-between', 
                                     alignItems: 'center',
-                                    transition: 'all 0.5s ease-in-out' // Smooth transition for the glowing border
+                                    transition: 'all 0.5s ease-in-out' 
                                 }}
                             >
                                 
@@ -147,13 +143,33 @@ const StudentBookings = () => {
                                         </button>
                                     )}
 
-                                    {booking.status === 'APPROVED' && !booking.checkedIn && (
-                                        <button 
-                                            onClick={() => setSelectedQrBooking(booking)}
-                                            style={{ backgroundColor: '#084298', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px' }}
-                                        >
-                                            📱 Check-in Pass
-                                        </button>
+                                    {booking.status === 'APPROVED' && (
+                                        <div style={{ display: 'flex', gap: '8px', marginTop: '5px', alignItems: 'center' }}>
+                                            {!booking.checkedIn && (
+                                                <button 
+                                                    onClick={() => setSelectedQrBooking(booking)}
+                                                    style={{ backgroundColor: '#084298', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px' }}
+                                                >
+                                                    📱 Check-in Pass
+                                                </button>
+                                            )}
+                                            <button 
+                                                onClick={() => navigate('/incidents/new?resourceId=' + booking.facilityId)}
+                                                style={{ backgroundColor: '#0d6efd', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold', transition: 'background-color 0.2s' }}
+                                                onMouseOver={(e) => e.target.style.backgroundColor = '#0b5ed7'}
+                                                onMouseOut={(e) => e.target.style.backgroundColor = '#0d6efd'}
+                                            >
+                                                Report Incident
+                                            </button>
+                                            <button 
+                                                onClick={() => navigate('/incidents?resourceId=' + booking.facilityId)}
+                                                style={{ backgroundColor: '#198754', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold', transition: 'background-color 0.2s' }}
+                                                onMouseOver={(e) => e.target.style.backgroundColor = '#157347'}
+                                                onMouseOut={(e) => e.target.style.backgroundColor = '#198754'}
+                                            >
+                                                View Incidents
+                                            </button>
+                                        </div>
                                     )}
                                 </div>
 
@@ -163,7 +179,7 @@ const StudentBookings = () => {
                 </div>
             )}
 
-            {/* --- QR CODE MODAL REMAINING THE SAME --- */}
+            {/* --- QR CODE MODAL --- */}
             {selectedQrBooking && (
                 <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
                     <div style={{ backgroundColor: 'white', padding: '40px', borderRadius: '12px', textAlign: 'center', maxWidth: '400px', width: '100%', boxShadow: '0 10px 30px rgba(0,0,0,0.2)' }}>

@@ -7,12 +7,10 @@ const StudentNavbar = () => {
     const { user, logout } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    // --- Notification States ---
     const [notifications, setNotifications] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef(null);
 
-    // Fetch Notifications from Spring Boot
     const fetchNotifications = async () => {
         if (user && user.id) {
             try {
@@ -24,7 +22,6 @@ const StudentNavbar = () => {
         }
     };
 
-    // Handle closing the dropdown when clicking outside
     useEffect(() => {
         fetchNotifications();
 
@@ -33,52 +30,38 @@ const StudentNavbar = () => {
                 setShowDropdown(false);
             }
         };
+
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [user]);
 
-    // --- ENHANCED: HANDLE CLICK TO NAVIGATE TO RELATED PAGE ---
     const handleNotificationClick = async (notif) => {
-        // 1. Mark as read on the backend
         if (!notif.read) {
             await notificationService.markAsRead(notif.id);
             fetchNotifications();
         }
         
-        // 2. Close dropdown
         setShowDropdown(false);
 
-        // 3. Navigation Logic based on Category
         switch (notif.category) {
             case 'BOOKING':
-                // Navigate to My Bookings and pass the booking ID for highlighting
                 navigate('/my-bookings', { state: { highlightId: notif.referenceId } });
                 break;
-            
             case 'TICKET':
-                // Assuming you have a maintenance/tickets page
                 navigate('/my-tickets', { state: { highlightId: notif.referenceId } });
                 break;
-
             case 'FACILITY':
-                // Navigate to a specific facility if referenceId exists
-                if (notif.referenceId) {
-                    navigate(`/facilities/${notif.referenceId}`);
-                } else {
-                    navigate('/facilities');
-                }
+                if (notif.referenceId) navigate(`/facilities/${notif.referenceId}`);
+                else navigate('/facilities');
                 break;
-
             default:
-                // General notifications stay on current page or go home
                 console.log("General notification clicked");
                 break;
         }
     };
 
-    // --- HANDLE DELETE ---
     const handleDeleteNotification = async (e, id) => {
-        e.stopPropagation(); // Stop navigation from triggering
+        e.stopPropagation(); 
         try {
             await notificationService.deleteNotification(id);
             fetchNotifications();
@@ -87,7 +70,6 @@ const StudentNavbar = () => {
         }
     };
 
-    // Handle "Mark all as read"
     const handleMarkAllRead = async () => {
         await notificationService.markAllAsRead(user.id);
         fetchNotifications();
@@ -98,22 +80,35 @@ const StudentNavbar = () => {
     return (
         <nav style={{ backgroundColor: 'white', borderBottom: '1px solid #cfe2ff', padding: '15px 30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', position: 'relative', fontFamily: 'sans-serif', zIndex: 1000 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
-                <h2 onClick={() => navigate('/')} style={{ margin: 0, color: '#084298', cursor: 'pointer', fontWeight: 'bold' }}>Campus Nexus</h2>
                 
+                <h2 onClick={() => navigate('/')} style={{ margin: 0, color: '#084298', cursor: 'pointer', fontWeight: 'bold' }}>
+                    Campus Nexus
+                </h2>
+
                 <div style={{ display: 'flex', gap: '20px' }}>
-                    <span onClick={() => navigate('/')} style={{ cursor: 'pointer', fontWeight: 'bold', color: '#495057' }}>Home</span>
-                    <span onClick={() => navigate('/facilities')} style={{ cursor: 'pointer', fontWeight: 'bold', color: '#495057' }}>Facilities</span>
+                    <span onClick={() => navigate('/')} style={{ cursor: 'pointer', fontWeight: 'bold', color: '#495057' }}>
+                        Home
+                    </span>
+                    <span onClick={() => navigate('/facilities')} style={{ cursor: 'pointer', fontWeight: 'bold', color: '#495057' }}>
+                        Facilities
+                    </span>
                     
                     {user && (
-                        <span onClick={() => navigate('/my-bookings')} style={{ cursor: 'pointer', fontWeight: 'bold', color: '#495057' }}>My Bookings</span>
+                        <span onClick={() => navigate('/my-bookings')} style={{ cursor: 'pointer', fontWeight: 'bold', color: '#495057' }}>
+                            My Bookings
+                        </span>
                     )}
+
+                    {/* DULNARA'S NEW INCIDENTS LINK */}
+                    <span onClick={() => navigate('/incidents')} style={{ cursor: 'pointer', fontWeight: 'bold', color: '#495057' }}>
+                        Incidents
+                    </span>
                 </div>
             </div>
 
             {user ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                     
-                    {/* --- THE NOTIFICATION BELL --- */}
                     <div ref={dropdownRef} style={{ position: 'relative' }}>
                         <div 
                             onClick={() => {
@@ -130,7 +125,6 @@ const StudentNavbar = () => {
                             )}
                         </div>
 
-                        {/* --- THE DROPDOWN PANEL --- */}
                         {showDropdown && (
                             <div style={{ position: 'absolute', top: '45px', right: '-50px', width: '350px', backgroundColor: 'white', border: '1px solid #cfe2ff', borderRadius: '8px', boxShadow: '0 8px 25px rgba(0,0,0,0.15)', zIndex: 1001, overflow: 'hidden' }}>
                                 
@@ -158,14 +152,7 @@ const StudentNavbar = () => {
                                             <div 
                                                 key={notif.id} 
                                                 onClick={() => handleNotificationClick(notif)}
-                                                style={{ 
-                                                    padding: '15px', 
-                                                    borderBottom: '1px solid #e9ecef', 
-                                                    backgroundColor: notif.read ? 'white' : '#f0f4fb', 
-                                                    cursor: 'pointer', 
-                                                    transition: 'background-color 0.2s', 
-                                                    position: 'relative' 
-                                                }}
+                                                style={{ padding: '15px', borderBottom: '1px solid #e9ecef', backgroundColor: notif.read ? 'white' : '#f0f4fb', cursor: 'pointer', transition: 'background-color 0.2s', position: 'relative' }}
                                             >
                                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '5px' }}>
                                                     <div style={{ fontWeight: 'bold', color: '#212529', fontSize: '14px', flex: 1, paddingRight: '10px' }}>
@@ -175,7 +162,6 @@ const StudentNavbar = () => {
                                                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                                         {!notif.read && <div style={{ width: '8px', height: '8px', backgroundColor: '#0d6efd', borderRadius: '50%' }}></div>}
                                                         
-                                                        {/* --- DELETE BUTTON --- */}
                                                         <button 
                                                             onClick={(e) => handleDeleteNotification(e, notif.id)}
                                                             style={{ background: 'none', border: 'none', color: '#dc3545', cursor: 'pointer', fontSize: '14px', padding: '2px' }}

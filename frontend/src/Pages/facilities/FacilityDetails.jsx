@@ -11,10 +11,7 @@ const FacilityDetails = () => {
 
     const [facility, setFacility] = useState(null);
     const [loading, setLoading] = useState(true);
-
-    // --- New State for the Schedule ---
     const [approvedBookings, setApprovedBookings] = useState([]);
-
     const [showBookingForm, setShowBookingForm] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [bookingMessage, setBookingMessage] = useState({ type: '', text: '' });
@@ -51,7 +48,6 @@ const FacilityDetails = () => {
                     activeSchedule.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
                     setApprovedBookings(activeSchedule);
                 }
-
             } catch (error) {
                 console.error('Error loading data:', error);
                 setFacility(null);
@@ -122,14 +118,20 @@ const FacilityDetails = () => {
                 <button onClick={() => navigate('/facilities')} style={{ marginBottom: '16px', backgroundColor: '#f8f9fa', border: '1px solid #dee2e6', padding: '8px 12px', borderRadius: '5px', cursor: 'pointer' }}>
                     Back to Facilities
                 </button>
-                <div style={{ backgroundColor: '#fff3cd', color: '#664d03', border: '1px solid #ffecb5', borderRadius: '8px', padding: '16px' }}>
-                    Facility not found.
-                </div>
+                <div>Facility not found.</div>
             </div>
         );
     }
 
-    const inputStyle = { width: '100%', padding: '10px', marginBottom: '15px', borderRadius: '6px', border: '1px solid #ccc', boxSizing: 'border-box', fontFamily: 'sans-serif' };
+    const inputStyle = {
+        width: '100%',
+        padding: '10px',
+        marginBottom: '15px',
+        borderRadius: '6px',
+        border: '1px solid #ccc',
+        boxSizing: 'border-box',
+        fontFamily: 'sans-serif'
+    };
 
     return (
         <div style={{ maxWidth: '900px', margin: '0 auto', padding: '20px', fontFamily: 'sans-serif' }}>
@@ -137,18 +139,19 @@ const FacilityDetails = () => {
                 &larr; Back to Facilities
             </button>
 
-            <div style={{ border: '1px solid #cfe2ff', borderRadius: '10px', overflow: 'hidden', backgroundColor: 'white', boxShadow: '0 4px 10px rgba(0,0,0,0.06)' }}>
+            <div style={{ border: '1px solid #cfe2ff', borderRadius: '10px', overflow: 'hidden', backgroundColor: 'white' }}>
                 {facility.imageUrl ? (
-                    <img src={facility.imageUrl} alt={facility.name} style={{ width: '100%', maxHeight: '350px', objectFit: 'cover', borderBottom: '1px solid #cfe2ff' }} />
+                    <img src={facility.imageUrl} alt={facility.name} style={{ width: '100%', maxHeight: '350px', objectFit: 'cover' }} />
                 ) : (
-                    <div style={{ height: '240px', backgroundColor: '#e7f1ff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#084298', fontWeight: 'bold', fontSize: '22px' }}>
+                    <div style={{ height: '240px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f8f9fa' }}>
                         {facility.type}
                     </div>
                 )}
 
                 <div style={{ padding: '30px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                        <h2 style={{ margin: 0, color: '#084298', fontSize: '28px' }}>{facility.name}</h2>
+                    {/* HEADER */}
+                    <div style={{ marginBottom: '15px' }}>
+                        <h2 style={{ margin: '0 0 10px 0', color: '#084298', fontSize: '28px' }}>{facility.name}</h2>
                         <span style={{ fontSize: '14px', padding: '6px 12px', borderRadius: '20px', backgroundColor: facility.status === 'ACTIVE' ? '#d1e7dd' : '#f8d7da', color: facility.status === 'ACTIVE' ? '#0f5132' : '#842029', fontWeight: 'bold' }}>
                             {facility.status}
                         </span>
@@ -156,6 +159,7 @@ const FacilityDetails = () => {
 
                     <p style={{ margin: '0 0 20px 0', color: '#6c757d', fontSize: '16px' }}>📍 {facility.location}</p>
 
+                    {/* DETAILS */}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '15px', marginBottom: '30px' }}>
                         <div style={{ backgroundColor: '#f8f9fa', borderRadius: '8px', padding: '15px', border: '1px solid #e9ecef' }}>
                             <div style={{ color: '#6c757d', fontSize: '12px', textTransform: 'uppercase', fontWeight: 'bold' }}>Type</div>
@@ -175,7 +179,7 @@ const FacilityDetails = () => {
                         </div>
                     </div>
 
-                    {/* --- NEW: THE CURRENT SCHEDULE SECTION --- */}
+                    {/* SCHEDULE */}
                     <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '10px', border: '1px solid #cfe2ff', marginBottom: '30px' }}>
                         <h3 style={{ marginTop: 0, color: '#084298', fontSize: '18px', borderBottom: '1px solid #cfe2ff', paddingBottom: '10px', marginBottom: '15px' }}>
                             📅 Upcoming Schedule
@@ -206,7 +210,7 @@ const FacilityDetails = () => {
                         )}
                     </div>
 
-                    {/* --- BOOKING SECTION --- */}
+                    {/* BOOKING SECTION */}
                     <div style={{ borderTop: '1px solid #dee2e6', paddingTop: '25px' }}>
                         
                         {bookingMessage.text && (
