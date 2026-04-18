@@ -7,30 +7,30 @@ import Footer from './components/common/Footer';
 
 // --- ADMIN ---
 import AdminSidebar from './components/admin/AdminSidebar';
-import AdminDashboard from './pages/admin/AdminDashboard'; // LOWERCASE pages
-import AdminBookings from './pages/bookings/AdminBookings'; // LOWERCASE pages
+import AdminDashboard from './pages/admin/AdminDashboard'; // Lowercase
+import AdminBookings from './pages/bookings/AdminBookings'; // Lowercase
 
 // --- TECHNICIAN ---
 import TechnicianSidebar from './components/technician/TechnicianSidebar';
-import TechnicianDashboard from './pages/technician/TechnicianDashboard'; // LOWERCASE pages
+import TechnicianDashboard from './Pages/technician/TechnicianDashboard'; // UPPERCASE P (GitHub Fix)
 
 // --- STUDENT ---
 import StudentNavbar from './components/student/StudentNavbar';
-import HomePage from './pages/student/HomePage'; // LOWERCASE pages
-import StudentBookings from './pages/bookings/StudentBookings'; // LOWERCASE pages
+import HomePage from './pages/student/HomePage'; // Lowercase
+import StudentBookings from './Pages/bookings/StudentBookings'; // UPPERCASE P (GitHub Fix)
 
 // --- FACILITIES ---
-import FacilitiesCatalogue from './pages/facilities/FacilitiesCatalogue'; // LOWERCASE pages
-import FacilityDetails from './pages/facilities/FacilityDetails'; // LOWERCASE pages
+import FacilitiesCatalogue from './pages/facilities/FacilitiesCatalogue'; // Lowercase
+import FacilityDetails from './Pages/facilities/FacilityDetails'; // UPPERCASE P (GitHub Fix)
 
 // --- INCIDENTS ---
-import IncidentList from './pages/incidents/IncidentList'; // LOWERCASE pages
-import CreateIncident from './pages/incidents/CreateIncident'; // LOWERCASE pages
-import TicketDetails from './pages/incidents/TicketDetails'; // LOWERCASE pages
+import IncidentList from './Pages/incidents/IncidentList'; // UPPERCASE P (GitHub Fix)
+import CreateIncident from './Pages/incidents/CreateIncident'; // UPPERCASE P (GitHub Fix)
+import TicketDetails from './Pages/incidents/TicketDetails'; // UPPERCASE P (GitHub Fix)
 
 // --- AUTH ---
-import LoginPage from './pages/auth/LoginPage'; // LOWERCASE pages
-import RegisterPage from './pages/auth/RegisterPage'; // LOWERCASE pages
+import LoginPage from './pages/auth/LoginPage'; // Lowercase
+import RegisterPage from './pages/auth/RegisterPage'; // Lowercase
 
 const AppRoutes = () => {
   const { user, loading } = useContext(AuthContext);
