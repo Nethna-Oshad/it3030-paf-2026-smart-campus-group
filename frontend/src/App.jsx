@@ -2,11 +2,24 @@ import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 
-// Import our page components
-import FacilitiesCatalogue from './pages/facilities/FacilitiesCatalogue';
-import FacilityDetails from './pages/facilities/FacilityDetails';
-import BookingForm from './pages/bookings/BookingForm'; // IMPORT THE NEW BOOKING FORM
-import BookingDashboard from './pages/bookings/BookingDashboard'; 
+// --- IMPORT SHARED COMPONENTS ---
+import Footer from './components/common/Footer';
+
+// --- IMPORT ADMIN COMPONENTS & PAGES ---
+import AdminSidebar from './components/admin/AdminSidebar';
+import AdminDashboard from './Pages/admin/AdminDashboard';
+
+// --- IMPORT STUDENT COMPONENTS & PAGES ---
+import StudentNavbar from './components/student/StudentNavbar';
+import HomePage from './Pages/student/HomePage';
+
+// --- IMPORT FACILITY PAGES ---
+import FacilitiesCatalogue from './Pages/facilities/FacilitiesCatalogue';
+import FacilityDetails from './Pages/facilities/FacilityDetails';
+
+// --- IMPORT AUTH PAGES ---
+import LoginPage from './Pages/auth/LoginPage';
+import RegisterPage from './Pages/auth/RegisterPage'; // <-- IMPORTED THE NEW REGISTER PAGE
 
 // ==========================================
 // APP ROUTES COMPONENT (Handles the logic)
@@ -70,10 +83,9 @@ const AppRoutes = () => {
           <Route path="/" element={<FacilitiesCatalogue />} />
           <Route path="/facilities/:id" element={<FacilityDetails />} />
           
-          {/* THE NEW SEPARATED BOOKING FORM ROUTE */}
-          <Route path="/facilities/:id/book" element={<BookingForm />} />
-          
-          <Route path="/bookings" element={<BookingDashboard />} />
+          {/* Auth Routes */}
+          <Route path="/login" element={!user ? <LoginPage /> : <Navigate to="/" />} />
+          <Route path="/register" element={!user ? <RegisterPage /> : <Navigate to="/" />} /> {/* <-- ADDED THE REGISTER ROUTE */}
           
           {/* Catch-all redirect */}
           <Route path="*" element={<Navigate to="/" />} />
