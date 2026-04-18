@@ -8,10 +8,12 @@ import Footer from './components/common/Footer';
 // --- IMPORT ADMIN COMPONENTS & PAGES ---
 import AdminSidebar from './components/admin/AdminSidebar';
 import AdminDashboard from './Pages/admin/AdminDashboard';
+import AdminBookings from './Pages/bookings/AdminBookings'; // <-- NEW IMPORT
 
 // --- IMPORT STUDENT COMPONENTS & PAGES ---
 import StudentNavbar from './components/student/StudentNavbar';
 import HomePage from './Pages/student/HomePage';
+import StudentBookings from './Pages/bookings/StudentBookings'; // <-- NEW IMPORT
 
 // --- IMPORT FACILITY PAGES ---
 import FacilitiesCatalogue from './Pages/facilities/FacilitiesCatalogue';
@@ -19,7 +21,7 @@ import FacilityDetails from './Pages/facilities/FacilityDetails';
 
 // --- IMPORT AUTH PAGES ---
 import LoginPage from './Pages/auth/LoginPage';
-import RegisterPage from './Pages/auth/RegisterPage'; // <-- IMPORTED THE NEW REGISTER PAGE
+import RegisterPage from './Pages/auth/RegisterPage';
 
 // We create an internal component to handle routing logic cleanly
 const AppRoutes = () => {
@@ -32,7 +34,6 @@ const AppRoutes = () => {
   // ==========================================
   // 1. ADMIN LAYOUT (Sidebar + Dashboard)
   // ==========================================
-  // If a user is logged in AND they are an Admin, show the Admin UI.
   if (user && user.role === 'ADMIN') {
     return (
       <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f4f7f6', fontFamily: 'sans-serif', margin: 0, padding: 0 }}>
@@ -43,6 +44,7 @@ const AppRoutes = () => {
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/facilities" element={<FacilitiesCatalogue />} />
               <Route path="/facilities/:id" element={<FacilityDetails />} />
+              <Route path="/admin/bookings" element={<AdminBookings />} /> {/* <-- NEW ROUTE */}
               <Route path="*" element={<Navigate to="/admin/dashboard" />} />
             </Routes>
           </main>
@@ -55,7 +57,6 @@ const AppRoutes = () => {
   // ==========================================
   // 2. PUBLIC & STUDENT LAYOUT (Top Navbar + Home)
   // ==========================================
-  // This layout is shown to EVERYONE ELSE (Not logged in, or logged in as a normal USER).
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#f4f7f6', fontFamily: 'sans-serif', margin: 0, padding: 0 }}>
       <StudentNavbar />
@@ -67,9 +68,12 @@ const AppRoutes = () => {
           <Route path="/facilities" element={<FacilitiesCatalogue />} />
           <Route path="/facilities/:id" element={<FacilityDetails />} />
           
+          {/* Protected Route: Only logged-in students can see their bookings */}
+          <Route path="/my-bookings" element={user ? <StudentBookings /> : <Navigate to="/login" />} /> {/* <-- NEW ROUTE */}
+          
           {/* Auth Routes */}
           <Route path="/login" element={!user ? <LoginPage /> : <Navigate to="/" />} />
-          <Route path="/register" element={!user ? <RegisterPage /> : <Navigate to="/" />} /> {/* <-- ADDED THE REGISTER ROUTE */}
+          <Route path="/register" element={!user ? <RegisterPage /> : <Navigate to="/" />} />
           
           {/* Catch-all route */}
           <Route path="*" element={<Navigate to="/" />} />
@@ -84,7 +88,6 @@ const AppRoutes = () => {
 // ==========================================
 // MAIN APP WRAPPER
 // ==========================================
-// We wrap everything in a SINGLE Router to prevent navigation crashes.
 function App() {
   return (
     <Router>
