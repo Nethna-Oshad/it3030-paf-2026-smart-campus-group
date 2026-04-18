@@ -5,26 +5,25 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Data
 @Document(collection = "bookings")
 public class Booking {
-
     @Id
     private String id;
-
-    private String facilityId;
-    private String userEmail;
-
-    private LocalDate bookingDate;
-    private LocalTime startTime;
-    private LocalTime endTime;
-
+    
+    private String facilityId; 
+    private String facilityName; 
+    
+    private String userId; 
+    private String userName; 
+    
     private String purpose;
-    private int expectedAttendees;
-
-    private BookingStatus status;
-    private String adminReason;
+    private int attendees;
+    
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+    
+    private BookingStatus status = BookingStatus.PENDING; 
 }

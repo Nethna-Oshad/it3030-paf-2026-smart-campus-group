@@ -14,7 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/facilities")
@@ -26,17 +25,6 @@ public class FacilityController {
     @GetMapping
     public ResponseEntity<List<Facility>> getAllFacilities() {
         return ResponseEntity.ok(facilityService.getAllFacilities());
-    }
-
-    // Get single facility by ID (Missing Endpoint fixed)
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getFacilityById(@PathVariable String id) {
-        try {
-            // Eyaage FacilityService eke method eka call wenne methanini
-            return ResponseEntity.ok(facilityService.getFacilityById(id));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Facility not found"));
-        }
     }
 
     @PostMapping

@@ -17,11 +17,6 @@ public class FacilityService {
         return facilityRepository.findAll();
     }
 
-    public Facility getFacilityById(String id) {
-        return facilityRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Facility not found"));
-    }
-
     public Facility createFacility(Facility facility) {
         return facilityRepository.save(facility);
     }

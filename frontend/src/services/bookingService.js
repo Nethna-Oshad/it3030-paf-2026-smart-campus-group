@@ -1,41 +1,32 @@
 import api from './api';
 
 const bookingService = {
-    // 1. Create a new booking
     createBooking: async (bookingData) => {
-        try {
-            const response = await api.post('/bookings', bookingData);
-            return response.data;
-        } catch (error) {
-            if (error.response && error.response.data && error.response.data.error) {
-                throw new Error(error.response.data.error);
-            }
-            throw new Error("Failed to create booking.");
-        }
-    },
-
-    // 2. Fetch bookings for a specific user
-    getUserBookings: async (email) => {
-        const response = await api.get(`/bookings?userEmail=${email}`);
+        const response = await api.post('/bookings', bookingData);
         return response.data;
     },
 
-    // 3. Fetch ALL bookings (For Admin)
+    getUserBookings: async (userId) => {
+        const response = await api.get(`/bookings/user/${userId}`);
+        return response.data;
+    },
+
     getAllBookings: async () => {
         const response = await api.get('/bookings');
         return response.data;
     },
 
-    // 4. Update Booking Status (Approve/Reject)
-    updateBookingStatus: async (id, status, adminReason = "") => {
-        const response = await api.put(`/bookings/${id}/status`, { status, adminReason });
+    updateBookingStatus: async (bookingId, status) => {
+        const response = await api.put(`/bookings/${bookingId}/status?status=${status}`);
         return response.data;
     },
 
-    // 5. Delete/Cancel a booking
-    deleteBooking: async (id) => {
-        const response = await api.delete(`/bookings/${id}`);
-        return response.data;
+    // --- NEW: Fetch all bookings for ONE facility ---
+    getFacilityBookings: async (facilityId) => {
+        // Since we don't have a dedicated backend route for this yet, 
+        // we will fetch all bookings and filter them in React.
+        const response = await api.get('/bookings');
+        return response.data.filter(b => String(b.facilityId) === String(facilityId));
     }
 };
 

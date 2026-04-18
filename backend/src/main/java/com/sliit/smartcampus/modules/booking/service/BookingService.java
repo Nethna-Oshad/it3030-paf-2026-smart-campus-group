@@ -1,13 +1,12 @@
 package com.sliit.smartcampus.modules.booking.service;
 
+import com.sliit.smartcampus.common.enums.BookingStatus;
 import com.sliit.smartcampus.modules.booking.model.Booking;
 import com.sliit.smartcampus.modules.booking.repository.BookingRepository;
-import com.sliit.smartcampus.common.enums.BookingStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -15,52 +14,39 @@ public class BookingService {
 
     private final BookingRepository bookingRepository;
 
-    // Retrieve all bookings (for Admin view)
-    public List<Booking> getAllBookings() {
-        return bookingRepository.findAll();
-    }
-
-    // Retrieve bookings for a specific user
-    public List<Booking> getBookingsByUser(String userEmail) {
-        return bookingRepository.findByUserEmail(userEmail);
-    }
-
-    // Create a new booking with Conflict Checking
     public Booking createBooking(Booking booking) {
-        // CONFLICT CHECK: Are there any overlapping bookings?
-        List<Booking> conflicts = bookingRepository.findConflictingBookings(
-                booking.getFacilityId(),
-                booking.getBookingDate(),
-                booking.getStartTime(),
+        // 1. Check for time conflicts. We only care about APPROVED or PENDING overlapping bookings.
+        List<BookingStatus> blockingStatuses = List.of(BookingStatus.APPROVED, BookingStatus.PENDING);
+        
+        List<Booking> conflicts = bookingRepository.findByFacilityIdAndStatusInAndEndTimeGreaterThanAndStartTimeLessThan(
+                booking.getFacilityId(), 
+                blockingStatuses, 
+                booking.getStartTime(), 
                 booking.getEndTime()
         );
 
         if (!conflicts.isEmpty()) {
-            throw new RuntimeException("Scheduling conflict: The resource is already booked for the selected time range.");
+            throw new RuntimeException("This facility is already booked or has a pending request during this time.");
         }
 
-        // Set initial status
+        // 2. No conflicts found, save it as PENDING.
         booking.setStatus(BookingStatus.PENDING);
         return bookingRepository.save(booking);
     }
 
-    // Admin updates the status (Approve or Reject)
-    public Booking updateBookingStatus(String bookingId, BookingStatus newStatus, String adminReason) {
-        Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
-
-        booking.setStatus(newStatus);
-
-        // If rejected, an admin reason should be provided
-        if (newStatus == BookingStatus.REJECTED && adminReason != null) {
-            booking.setAdminReason(adminReason);
-        }
-
-        return bookingRepository.save(booking);
+    public List<Booking> getAllBookings() {
+        return bookingRepository.findAll();
     }
 
-    // Delete a booking
-    public void deleteBooking(String bookingId) {
-        bookingRepository.deleteById(bookingId);
+    public List<Booking> getUserBookings(String userId) {
+        return bookingRepository.findByUserId(userId);
+    }
+
+    public Booking updateBookingStatus(String bookingId, BookingStatus newStatus) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+        
+        booking.setStatus(newStatus);
+        return bookingRepository.save(booking);
     }
 }
